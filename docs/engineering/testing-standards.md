@@ -78,7 +78,8 @@ always opt-in. They supplement rather than replace isolated functional tests.
   selection. Never commit or print secrets.
 - Perform actionable preflights and fail clearly when an explicitly requested
   runtime is unavailable.
-- Make scenarios independent, seed only minimal data, and clean created state.
+- Make scenarios independent and seed only minimal data. Dispose of resources
+  owned by the run according to the isolation rules below.
 - Do not accept an HTTP acknowledgement or queue publication as sufficient when
   the scenario promises an observable downstream business result.
 - Document the exact command and authorization boundary in the feature plan.
@@ -86,6 +87,36 @@ always opt-in. They supplement rather than replace isolated functional tests.
   real-provider request or external side effect, as defined by Workflow 05.
 
 ## Test quality
+
+### Shared infrastructure and scenario ownership
+
+Keep reusable infrastructure lifecycle, connections, and common environment
+setup in a cohesive test harness appropriate to the project's tools. Keep
+scenario inputs, fixtures, expected outcomes, and behavior-specific setup
+explicit in the scenario. A scenario-specific schedule or response sequence
+must not become an implicit dependency of unrelated tests.
+
+Share infrastructure only when scenarios remain independent. Extract helpers
+for concrete reuse or clarity, with explicit inputs and ownership; avoid
+hidden mutable scenario state, unnecessary inheritance, and abstractions that
+obscure the actions or assertions. These rules apply to automated suites and
+agent-operated test scripts in any language.
+
+### Isolation without destructive resets
+
+Isolate scenarios through disposable resources, dedicated namespaces,
+scenario-specific identifiers, or another mechanism that prevents collisions.
+Do not rely on deleting, truncating, purging, or resetting shared application
+state to make tests pass. Shared infrastructure does not imply shared fixtures
+or permission to alter another scenario's data.
+
+Normal application processing, including acknowledgement or removal of data
+required by the behavior under test, remains part of the scenario. Resource
+teardown must be limited to resources exclusively owned by the test run and
+must respect environment constraints. Verify ownership before cleanup; when
+ownership cannot be established, preserve the state and report what remains.
+
+### Scenario design
 
 - Use descriptive test names and Arrange/Act/Assert structure when it improves
   readability.

@@ -4,6 +4,12 @@
 Implement the approved feature in the smallest coherent change.
 
 ## Skills
+Before implementing, apply
+[Prefer existing platform capabilities](../../docs/engineering/coding-standards.md#prefer-existing-platform-capabilities):
+inspect comparable project flows and available framework mechanisms, and
+choose the simplest option that preserves the required semantics. Recheck this
+choice before handing the change to quality gates.
+
 Execute:
 1. `../skills/implement-java-feature/SKILL.md`
 2. `../skills/create-unit-tests/SKILL.md`
@@ -66,3 +72,7 @@ Return to Workflow 01 if a missing business/architecture decision is discovered.
 
 ## Completion boundary
 Do not perform the final comprehensive quality review here.
+
+## Documentation usefulness rule
+
+Follow the adopting application's established comment style. The method/property documentation checks above apply only when documentation adds useful information beyond names, types, annotations, and the containing component. Do not require comments that merely restate obvious code, even for methods with light complexity or application-owned fields. For example, queue-name fields in `Queues`, routing keys in `Rks`, obvious identifiers, and simple delegating methods need no descriptive boilerplate. During implementation and review, remove redundant feature comments and preserve explanations of non-obvious business rationale, units, date boundaries, failure semantics, and side effects. Consult `docs/engineering/coding-standards.md` for the canonical practice.

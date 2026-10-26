@@ -15,6 +15,65 @@ when using another Java stack.
 - Make responsibilities and boundaries explicit.
 - Prefer code that another engineer or AI agent can understand and modify safely.
 
+## Follow established project conventions
+
+Before changing code, inspect comparable components and the applicable project
+standards. Follow established organization, naming, configuration, integration,
+and documentation conventions when they satisfy the requirement. These
+principles apply regardless of programming language, framework, or project type.
+
+Do not introduce a parallel structure or convention merely because it is
+familiar from another project. When an existing pattern cannot meet the
+requirement safely or correctly, explain the concrete gap and keep the
+deviation focused; do not copy a known defect or override active standards.
+
+## Prefer existing platform capabilities
+
+Before implementing a cross-cutting concern, look for a simpler solution in
+the project's existing code, Java APIs, selected framework, and installed
+libraries. Inspect comparable flows and follow established project patterns
+when they satisfy the requirement. Consult official documentation for the
+version in use when support or behavior is uncertain; do not assume a familiar
+annotation or API has the required semantics.
+
+- Prefer established framework mechanisms and supported ecosystem practices
+  over custom orchestration when they preserve the required behavior.
+- Do not introduce a bean, manager, wrapper, configuration class, manual loop,
+  or exception/status predicate solely to reproduce behavior already covered
+  clearly by an existing annotation, API, or project component.
+- Compare correctness, readability, maintenance, and operational behavior,
+  rather than choosing solely by line count or popularity. Keep necessary
+  configuration, boundaries, observability, and safeguards.
+- If a custom mechanism is needed, state the concrete gap in the existing
+  plan or review explanation. This does not require a new document or decision
+  record for a local implementation detail.
+
+For example, when Spring Retry is available and appropriate, prefer
+`@Retryable`, `@Backoff`, and `@Recover` to a dedicated retry bean or manual
+retry loop. Translate provider-specific failures into meaningful exception
+types at the integration boundary; let the retry mechanism act on those types
+instead of inspecting HTTP responses in the consumer. Verify proxy
+interception, attempt limits, recovery, and terminal rejection. A simpler
+implementation must preserve duplicate-send and uncertain-result handling.
+
+## Do not bypass quality rules
+
+Fix the underlying code or test when a quality rule fails. Do not introduce or
+expand `@SuppressWarnings`, `NOSONAR`, inline disable directives, suppression
+files, rule exclusions, skipped tests, or weakened thresholds merely to make
+checks pass. Do not disguise the same violation with equivalent code that
+evades detection.
+
+For example, replace an unnecessarily broad exception catch with the specific
+failures the boundary handles, and use a meaningful constant for a repeated
+protocol literal instead of suppressing the corresponding Checkstyle rules.
+
+When a genuine false positive or tool limitation cannot be resolved within the
+change, report the finding and limitation explicitly; do not silently disable
+the check or claim it passed. A deliberate change to an engineering rule must
+be handled as a standards change, not hidden inside feature implementation.
+Preserve unrelated existing exceptions and report them separately when relevant.
+
 ## Pragmatic SOLID
 
 Follow SOLID principles pragmatically. SOLID is a design guide, not a reason to introduce unnecessary layers, interfaces, factories, indirection, or abstractions.
@@ -63,6 +122,20 @@ Dependencies should generally flow from API/integration boundaries toward applic
 - Do not reuse one generic DTO across unrelated use cases merely to reduce class count.
 - Do not expose persistence entities as DTOs.
 
+### Explicit external response contracts
+
+Represent known external response structures with explicit data contracts
+appropriate to the project's language and tooling, such as schemas, types,
+records, structures, or validated models. Verify fields, optionality, and value
+types against the authoritative contract. Convert and validate responses at
+the integration boundary before application logic consumes them.
+
+Avoid passing unstructured maps, generic document trees, or raw payloads
+through application logic when the response shape is known. Keep genuinely
+dynamic sections flexible and contained; do not invent a fixed schema for
+data whose contract is intentionally open. Static type declarations alone
+do not validate untrusted runtime data.
+
 ## Service Layer
 
 - Services coordinate application use cases and business behavior.
@@ -81,6 +154,14 @@ Dependencies should generally flow from API/integration boundaries toward applic
 - Prefer Spring Data JPA capabilities before custom persistence infrastructure.
 
 ## Configuration
+
+Add a configuration option only when there is a concrete need to vary behavior
+by environment or operation. Reuse established defaults and configuration
+mechanisms when they already express the required behavior. Avoid redundant
+options, activation switches, or conditional initialization without an actual
+operational use case. Preserve configuration needed for security, deployment,
+compatibility, or recovery; remove obsolete options and their references
+together after checking their consumers.
 
 - Keep Spring/infrastructure configuration under clear configuration boundaries.
 - Externalize environment-specific configuration.
@@ -124,16 +205,16 @@ Code should communicate its normal control flow primarily through cohesive
 responsibilities, explicit domain names, meaningful intermediate values, and
 small methods. Comments are required when important intent, constraints, or
 consequences cannot be understood safely from the code alone. JavaDoc is also
-a mandatory navigation aid for methods with light or greater cognitive
+a navigation aid for methods with light or greater cognitive
 complexity and for data carried by application-owned objects.
 
-### Mandatory JavaDoc baseline
+### Useful JavaDoc baseline
 
-- Add JavaDoc to every method that performs at least one decision, branch,
+- Add JavaDoc where it communicates useful intent or contract information beyond the code. Consider methods with a decision, branch,
   iteration, transformation, normalization, validation, orchestration, state
   change, persistence operation, external call, failure translation, or other
   non-trivial behavior. This is the project's threshold for **light or greater
-  complexity**; it does not depend on a particular static-analysis score.
+  complexity**; it does not depend on a particular static-analysis score. Complexity alone does not justify redundant documentation.
 - Method JavaDoc must state both **what the method does** and **why the method
   exists** in the surrounding application flow. Add `@param`, `@return`, and
   `@throws` only where they communicate useful contract information rather than
@@ -141,7 +222,7 @@ complexity and for data carried by application-owned objects.
 - Trivial accessors, delegating constructors, framework-required no-op methods,
   and self-evident constant getters do not require JavaDoc unless they expose a
   non-obvious contract.
-- Document properties of application-owned records, DTOs, entities,
+- Document non-obvious properties of application-owned records, DTOs, entities,
   configuration objects, commands, events, and results. Keep property
   documentation deliberately short: a phrase describing the value, unit, or
   role is sufficient. Prefer record-level `@param` tags for record components
@@ -176,6 +257,10 @@ complexity and for data carried by application-owned objects.
 - Keep comments close to the smallest code element they explain.
 
 ### What to avoid
+
+- Follow the adopting application's established documentation style. Do not introduce ceremonial comments merely to satisfy a generic baseline.
+- Omit documentation when names, types, annotations, and the containing component already make the meaning obvious. For example, a field named `autoCardReissue` in `Queues` does not need a comment saying it is a queue name; the same applies to routing keys in `Rks`, obvious identifiers, accessors, and simple delegating methods.
+- Remove redundant comments introduced by a feature. Preserve documentation that explains non-obvious units, date boundaries, business rationale, failure behavior, or operational consequences.
 
 - Do not add comments that merely translate the next line of code into prose.
 - Do not add JavaDoc mechanically to trivial accessors or boilerplate outside
@@ -251,6 +336,15 @@ Avoid:
 - Include correlation identifiers for asynchronous/distributed processing when available.
 - Never log passwords, credentials, access tokens, secrets, or unnecessary sensitive payloads.
 - Avoid noisy logging without operational value.
+
+Protect sensitive data with the simplest supported logging controls that meet
+the operational requirement. Check effective settings across environments,
+including dependency logs and request/response bodies, headers, and error
+details. Prefer built-in level controls, field allowlists, or redaction before
+adding custom logging infrastructure. Disable payload or transport logging
+when safe filtering is unavailable, while retaining useful, safe operational
+events through the project's normal logging mechanism. Verify that secrets
+and sensitive data remain absent on failure paths as well as successful ones.
 
 ## Spring
 
