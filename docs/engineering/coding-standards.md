@@ -320,6 +320,23 @@ Avoid:
 - Do not manually format code in conflict with automated formatting.
 - Avoid unrelated formatting churn in feature diffs.
 
+### Annotated fields
+
+Separate an annotated field from the preceding field with one blank line.
+Place the blank line before the field's first annotation, including `@Value`;
+keep the annotations adjacent to the field they annotate. Consecutive fields
+without annotations do not require a blank line between them.
+
+```java
+private final ResponsysClient client;
+
+@Value("${application.responsys.username}")
+private String username;
+
+@Value("${application.responsys.password}")
+private String password;
+```
+
 ## Error Handling
 
 - Fail explicitly when an operation cannot satisfy its contract.
