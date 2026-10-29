@@ -339,6 +339,18 @@ private String password;
 
 ## Error Handling
 
+### Named string constants
+
+Declare fixed error messages, diagnostic codes, and provider/protocol identifiers
+as meaningfully named `private static final String` constants instead of inline
+string literals in constructors, conditionals, switch branches, and return
+statements. Apply this even when a value occurs only once: the constant names
+the value's role and keeps the vocabulary consistent within the class.
+
+Keep constants private to the owning class unless sharing is required by an
+existing contract. Reuse an existing constant when it represents the same
+meaning; do not introduce a global constants class for unrelated values.
+
 - Fail explicitly when an operation cannot satisfy its contract.
 - Do not silently swallow exceptions.
 - Do not catch broad exceptions without a concrete recovery, translation, logging, or boundary-handling reason.
