@@ -20,8 +20,13 @@ A change is done when, as applicable:
   code alone cannot communicate them safely.
 - Changed behavior has not left stale, contradictory, speculative, or
   sensitive comments/JavaDoc behind.
-- Methods with light or greater complexity explain in JavaDoc what they do and
-  why they exist; application-owned object properties have concise
-  documentation.
-- Every added or changed automated test documents the behavior or failure it
-  proves and why the scenario matters.
+- Documentation satisfies [Comments and JavaDoc](coding-standards.md#comments-and-javadoc),
+  including its method, property, and test criteria.
+- The final task diff matches the authorized scope and current user constraints.
+- Applicable mandatory rules have evidence or an explicit scoped exception
+  under [Verification and completion](ai-development-standards.md#verification-and-completion).
+  Required checks with missing evidence remain unverified.
+
+Apply this definition to the requested deliverable. A review-only deliverable
+contains findings and validation limits. An implementation deliverable must
+satisfy its applicable checks before being reported as complete.

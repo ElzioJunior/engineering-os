@@ -14,10 +14,9 @@ isolated and reproducible.
 - Existing functional-test conventions.
 
 ## Procedure
-1. Place Java tests under `src/test/isolated/java`, preserving production
-   package paths, and name each class `{TestName}FunctionalTest`. Never place
-   isolated functional tests under `src/test/unit/java` or
-   `src/test/integrated/java`.
+1. Use the configured isolated-functional source set and naming convention under
+   [Testing Standards](../../../docs/engineering/testing-standards.md#project-configuration),
+   preserving production package paths and suite isolation.
 2. Identify the smallest important end-to-end/application flow.
 3. Exercise real application wiring where practical.
 4. Isolate external systems using controlled test doubles or ephemeral

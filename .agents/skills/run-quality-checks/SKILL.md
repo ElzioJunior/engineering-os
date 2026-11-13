@@ -14,10 +14,8 @@ Execute and report repository quality gates without inventing results.
 
 ## Procedure
 Run applicable configured checks:
-1. Verify test source separation: unit `{TestName}Test` under
-   `src/test/unit/java`, isolated `{TestName}FunctionalTest` under
-   `src/test/isolated/java`, and opt-in
-   `{TestName}IntegratedFunctionalTest` under `src/test/integrated/java`.
+1. Verify test separation using the adopting project's configured layout and
+   commands under [Testing Standards](../../../docs/engineering/testing-standards.md#project-configuration).
 2. Build/compile.
 3. Unit tests.
 4. Coverage verification.
@@ -28,7 +26,7 @@ Run applicable configured checks:
 
 For each check, record:
 - command/tool;
-- pass/fail;
+- outcome under [Verification and completion](../../../docs/engineering/ai-development-standards.md#verification-and-completion);
 - meaningful result;
 - reason if not executed.
 
@@ -39,6 +37,9 @@ A concise quality report.
 - Required checks pass.
 - Eligible code meets the repository's configured unit-test coverage standard.
 - No failing check is hidden or reclassified as success.
+- Each mandatory rule affected by the diff has evidence from tooling or review.
+  A missing tool is reported as a tooling gap with the available review
+  evidence. An unavailable required check remains unverified.
 
 ## Failure conditions
 Return implementation defects to the implementation workflow/skill.

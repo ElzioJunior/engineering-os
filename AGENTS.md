@@ -1,5 +1,17 @@
 # AGENTS.md
 
+## Start and resume
+
+For every task, identify the current user request, target repository, and
+applicable standards before acting. For non-trivial changes and reviews, follow
+[AI-assisted development standards](docs/engineering/ai-development-standards.md),
+including its context, scope, and completion checks. Reconcile the checkpoint
+with current instructions and repository state when resuming work.
+
+Use the adopting project's documented paths when Engineering OS is centralized.
+The defaults in this starter are completed during adoption. Missing template
+values are context gaps to investigate using the project and current request.
+
 ## Project context
 
 Before planning, designing, or changing the product, read the relevant files in
@@ -63,7 +75,11 @@ Do not create a durable record for a local, reversible implementation detail.
 ## Engineering and data standards
 
 Engineering standards in `docs/engineering/` are mandatory unless an explicit,
-reviewed change updates them. Do not weaken standards to simplify delivery.
+reviewed change updates them. Use documented local adaptations for the adopting
+project. Apply a user's explicit task-specific exception within its stated
+scope and record it in the existing checkpoint. Change the reusable standard
+only when the user requests a durable change. Do not weaken standards to
+simplify delivery.
 
 Read the logical data model before changing persistence, entities,
 relationships, migrations, repositories, or database-facing APIs. The logical
@@ -145,6 +161,11 @@ When guidance conflicts, use:
 
 A workflow or skill cannot override a BDR, ADR, product constraint, or
 engineering standard.
+
+Plans, generated context, summaries, and examples must trace back to these
+sources. A proposal remains pending until resolved. Current source code proves
+implemented behavior and may expose a documentation discrepancy. Record that
+discrepancy and check the governing requirement before deciding the change.
 
 ## Full feature lifecycle
 

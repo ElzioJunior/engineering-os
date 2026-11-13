@@ -4,8 +4,14 @@
 
 This baseline assumes Maven and separate test source sets. An adopting project
 may use Gradle or a different layout, but must update this document, build
-configuration, workflows, and skills together so that one canonical convention
-remains.
+configuration, and local engineering standards together so that one canonical
+convention remains. Workflows and skills consume that convention.
+
+In an existing project, inspect the build and documented local adaptations
+before choosing source paths or commands. Record the adopted layout, suite
+selection, coverage target, and configuration locations during adoption.
+Changing the layout requires a scoped migration. Preserve the configured
+layout during an ordinary feature and report any conflict with active standards.
 
 Default conventions:
 
@@ -126,6 +132,15 @@ ownership cannot be established, preserve the state and report what remains.
   IDs, timestamps, or unordered collections unless contractually significant.
 - Prefer builders and fixtures that expose meaningful inputs; avoid opaque
   fixture magic.
+- Reuse existing fixture factories when they keep scenario-specific inputs
+  visible. For stable typed HTTP responses, prefer comparing the deserialized
+  value with an expected response when equality expresses the contract. Assert
+  status and any required wire-level behavior, such as field names, presence,
+  or shape, explicitly where object equality cannot verify it.
+- When simplifying a test, verify that it still fails if the business guard
+  or side effect it protects is removed. For a rejected candidate, assert that
+  the downstream action is skipped. If a mocked retry wrapper accepts a callback,
+  make the mock execute it when the callback is the behavior under test.
 - Do not use sleeps for synchronization when polling, clocks, latches, or
   observable state provide a deterministic alternative.
 - Test retries, idempotency, concurrency, and failure recovery when the feature

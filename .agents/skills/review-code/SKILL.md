@@ -14,6 +14,11 @@ Perform an independent, evidence-based review of a completed change.
 - Quality report.
 - Relevant BDRs/ADRs/standards/data model.
 
+Load the applicable rules and current authorized scope through the active
+`AGENTS.md`, including when this skill is invoked directly. Inspect the actual
+task diff and relevant callers. Use the implementation summary as context and
+verify its claims against code and test evidence. Report any unavailable checks.
+
 ## Review dimensions
 1. Correctness and edge cases.
 2. Architecture and boundaries.
@@ -33,14 +38,13 @@ Perform an independent, evidence-based review of a completed change.
      semantics are documented;
    - JavaDoc exists where an architectural/public boundary needs an explicit
      contract;
-   - every method with light or greater complexity explains what it does and
-     why it exists;
-   - record/DTO/entity/configuration properties have concise documentation;
-   - every automated test method explains what it proves and why the scenario
-     matters;
+   - changed methods, properties, and tests satisfy
+     [Comments and JavaDoc](../../../docs/engineering/coding-standards.md#comments-and-javadoc);
    - comments and JavaDoc are accurate, useful, non-sensitive, and consistent
      with the implementation and governing decisions.
 8. Unnecessary complexity.
+9. Adherence to the authorized slice and applicable mandatory standards,
+   including new infrastructure, client configuration, and shared-code changes.
 
 ## Finding format
 Each finding must include:
@@ -49,18 +53,19 @@ Each finding must include:
 - problem;
 - consequence;
 - recommended fix.
+- governing rule and verification evidence for a standards finding.
 
 Do not produce vague stylistic findings.
 Readability findings must identify the concrete comprehension or maintenance
-risk. Missing comments are findings only when code and existing durable
-documentation do not communicate important intent or contract safely.
+risk. Report missing documentation required by an applicable standard, including
+test-method JavaDoc. For other comments, establish the important intent or
+contract that code and existing documentation leave unclear.
 
 ## Output
 Structured review report.
 
 ## Validation
-Every finding must be grounded in code, tests, or repository decisions.
-
-## Documentation usefulness rule
-
-Follow the adopting application's established comment style. The method/property documentation checks above apply only when documentation adds useful information beyond names, types, annotations, and the containing component. Do not require comments that merely restate obvious code, even for methods with light complexity or application-owned fields. For example, queue-name fields in `Queues`, routing keys in `Rks`, obvious identifiers, and simple delegating methods need no descriptive boilerplate. During implementation and review, remove redundant feature comments and preserve explanations of non-obvious business rationale, units, date boundaries, failure semantics, and side effects. Consult `docs/engineering/coding-standards.md` for the canonical practice.
+Every finding must be grounded in code, tests, or repository decisions. Apply
+the [verification and completion rules](../../../docs/engineering/ai-development-standards.md#verification-and-completion)
+when deciding whether implementation is compliant. Keep a review-only task
+within its requested reporting scope.

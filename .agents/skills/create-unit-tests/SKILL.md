@@ -13,11 +13,12 @@ Create meaningful unit tests for new or changed production behavior.
 - Applicable testing standards.
 
 ## Procedure
-1. Place Java tests under `src/test/unit/java`, preserving production package
-   paths. Never place unit tests under `src/test/isolated/java` or
-   `src/test/integrated/java`.
-2. Use the `*Test` suffix and keep the test process-local: do not start Spring,
-   open sockets, start databases, or require external processes.
+1. Use the configured unit source set and naming convention under
+   [Testing Standards](../../../docs/engineering/testing-standards.md#project-configuration),
+   preserving production package paths and suite isolation.
+2. Keep unit tests process-local, with dependencies controlled inside the test
+   process. Starting Spring, sockets, databases, or external processes belongs
+   to the applicable functional suite.
 3. Identify observable behavior and decision branches.
 4. Cover:
    - happy paths;
@@ -39,7 +40,7 @@ Unit tests that prove the intended behavior.
 ## Validation
 - Tests pass.
 - Assertions prove meaningful behavior.
-- Every unit test is located under `src/test/unit/java` and uses `*Test`.
+- Every unit test uses the project's configured unit source set and naming.
 - Coverage contributes to the project's configured eligible-code target.
 - Every test method documents its scenario and relevance.
 

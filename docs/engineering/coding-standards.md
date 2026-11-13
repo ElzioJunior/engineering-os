@@ -9,7 +9,7 @@ when using another Java stack.
 
 - Optimize for clarity, maintainability, and explicit domain language.
 - Prefer the simplest design that correctly satisfies the current requirements.
-- Keep business rules out of controllers, transport DTOs, persistence entities, repositories, and configuration classes.
+- Implement application business rules in services. Keep them out of controllers, event listeners, transport DTOs, persistence entities, repositories, and configuration classes.
 - Prefer small, cohesive components over large utility classes.
 - Avoid speculative abstractions and premature generalization.
 - Make responsibilities and boundaries explicit.
@@ -21,6 +21,17 @@ Before changing code, inspect comparable components and the applicable project
 standards. Follow established organization, naming, configuration, integration,
 and documentation conventions when they satisfy the requirement. These
 principles apply regardless of programming language, framework, or project type.
+
+HTTP clients inherit the project's shared configuration. Use client-specific
+settings only for a concrete protocol or data protection requirement. Prefer
+framework properties over a dedicated configuration class when they cover the
+exception.
+
+Use the project's shared error decoder and exception types for HTTP clients.
+Verify the provider's actual error contract before changing shared decoding.
+Omit explicit media types when the client defaults already match the endpoint
+contract. Reuse the project's mapping tool when it expresses the mapping
+clearly, and keep provider-specific conversions at the integration boundary.
 
 Do not introduce a parallel structure or convention merely because it is
 familiar from another project. When an existing pattern cannot meet the
@@ -68,6 +79,13 @@ types at the integration boundary; let the retry mechanism act on those types
 instead of inspecting HTTP responses in the consumer. Verify proxy
 interception, attempt limits, recovery, and terminal rejection. A simpler
 implementation must preserve duplicate-send and uncertain-result handling.
+
+Reuse an existing retry service or listener policy when its semantics fit.
+Check the effective attempt count across the client, application, and broker.
+Configure only intentional overrides of verified defaults. When changing an
+`@Retryable` signature, verify the matching `@Recover` return type and ordered
+arguments, and check that terminal handling retains the correlation identifiers
+needed to diagnose a rejected message.
 
 ## Do not bypass quality rules
 
@@ -127,6 +145,28 @@ Dependencies should generally flow from API/integration boundaries toward applic
 - Do not expose persistence entities directly through APIs.
 - Keep HTTP-specific concepts out of business logic.
 
+Read authoritative data through the service that owns it. Reuse a single
+existing response for related values when its contract supplies them at the
+required scope and freshness. Check the identifier, required fields, error
+shape, and optionality before adding validation or fallback behavior. Keep
+external field names at the boundary and use the established internal domain
+name where its meaning is equivalent. Limit new payloads to data needed by
+their consumers.
+
+For a contract that identifies a customer independently of the document type,
+use the project's established customer identifier name (for example,
+`customerIdentifier`). Keep a provider field such as `cpf` when the contract
+specifically requires a CPF, and map it explicitly at the boundary.
+
+Keep pagination aligned with the data the use case needs. If a bounded read
+is intentional, record the bound and what happens when more data exists. When
+a decision requires the full result, account for remaining pages before using
+the response to make that decision.
+
+Document how producers use a new event entry point, including exchange or
+topic, routing key when applicable, required fields, and how to correlate
+failures. Keep provider request mappings in the integration documentation.
+
 ## DTOs
 
 - Use Java records by default for immutable request, response, event, command, and transport structures when appropriate.
@@ -152,6 +192,7 @@ do not validate untrusted runtime data.
 ## Service Layer
 
 - Services coordinate application use cases and business behavior.
+- Event listeners handle message delivery concerns such as validation and retry, then delegate the use case to a service. Business decisions and orchestration belong in the service.
 - Keep services cohesive and focused on a clear capability.
 - Avoid large service classes that accumulate unrelated use cases.
 - Express business rules with explicit domain language.
@@ -197,7 +238,7 @@ together after checking their consumers.
 
 - Use names that describe business intent rather than technical mechanics.
 - Classes should represent clear responsibilities or domain concepts.
-- Methods should describe actions or queries precisely.
+- Every method name must state what the method does, including meaningful side effects. Use `evaluateAndApplyDiscount` for an operation that evaluates eligibility and applies the discount when eligible.
 - Avoid vague names such as `Manager`, `Helper`, `Utils`, `Processor`, or `Handler` when a more specific domain name exists.
 - Avoid unexplained abbreviations.
 - Keep naming consistent across API, service, persistence, messaging, and tests.
@@ -211,6 +252,11 @@ together after checking their consumers.
 - Avoid long parameter lists; introduce a meaningful parameter object/domain type when useful.
 - Do not split simple logic into tiny methods solely to satisfy arbitrary size targets.
 - Optimize for cognitive simplicity.
+- Name predicates for the decision they return and use `boolean` when callers
+  only need that decision. For ordered business filters, make precedence and
+  outcomes explicit. Load expensive inputs only when a reached rule needs them
+  and reuse them within that evaluation. Keep I/O in the responsible service or
+  integration component and keep data-only context objects free of client calls.
 
 ## Comments and JavaDoc
 
@@ -218,8 +264,8 @@ Code should communicate its normal control flow primarily through cohesive
 responsibilities, explicit domain names, meaningful intermediate values, and
 small methods. Comments are required when important intent, constraints, or
 consequences cannot be understood safely from the code alone. JavaDoc is also
-a navigation aid for methods with light or greater cognitive
-complexity and for data carried by application-owned objects.
+a navigation aid when method or data contracts need explanation. The criteria
+below govern planning, implementation, review, and completion.
 
 ### Useful JavaDoc baseline
 
@@ -265,8 +311,7 @@ complexity and for data carried by application-owned objects.
 - Use JavaDoc for public or architectural boundaries whose contract is not
   fully obvious from the signature, especially gateways, integration ports,
   reusable services, message contracts, extension points, and APIs consumed by
-  another module or service. This complements, rather than replaces, the
-  mandatory complexity baseline above.
+  another module or service. Apply the usefulness criteria above.
 - Keep comments close to the smallest code element they explain.
 
 ### What to avoid
@@ -276,8 +321,8 @@ complexity and for data carried by application-owned objects.
 - Remove redundant comments introduced by a feature. Preserve documentation that explains non-obvious units, date boundaries, business rationale, failure behavior, or operational consequences.
 
 - Do not add comments that merely translate the next line of code into prose.
-- Do not add JavaDoc mechanically to trivial accessors or boilerplate outside
-  the mandatory method, property, and test baseline above.
+- Apply the method, property, and test criteria above when deciding whether
+  JavaDoc adds necessary contract information.
 - Do not use comments to compensate for vague names, large methods, excessive
   nesting, hidden side effects, or mixed responsibilities. Refactor the code
   first, then document only the remaining non-obvious intent.
@@ -378,6 +423,11 @@ meaning; do not introduce a global constants class for unrelated values.
 - Include correlation identifiers for asynchronous/distributed processing when available.
 - Never log passwords, credentials, access tokens, secrets, or unnecessary sensitive payloads.
 - Avoid noisy logging without operational value.
+
+Carry the existing message or correlation ID through consumption, retries,
+terminal failure, and related audit entries when available. For persisted audit
+data, store only the fields needed to explain the outcome and define retention
+according to the owning service's requirements.
 
 Protect sensitive data with the simplest supported logging controls that meet
 the operational requirement. Check effective settings across environments,

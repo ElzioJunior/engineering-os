@@ -13,10 +13,16 @@ Fix actionable code-review findings without expanding scope unnecessarily.
 - Current implementation.
 
 ## Procedure
+Apply this skill when implementing findings is authorized. For review-only
+requests, complete the requested report through the review skill.
+
 1. Fix all BLOCKER findings.
 2. Fix all HIGH findings.
-3. Fix MEDIUM findings unless consciously deferred with reason.
-4. Apply LOW findings only when beneficial and low-risk.
+3. Fix in-scope mandatory-rule violations at any severity or record an explicit
+   applicable exception under the
+   [completion standard](../../../docs/engineering/ai-development-standards.md#verification-and-completion).
+4. For other MEDIUM findings, fix or explicitly defer with reason. Apply other
+   LOW findings when beneficial and low-risk.
 5. Keep fixes narrowly scoped.
 6. Add/update tests when findings expose missing behavior.
 7. Rerun affected quality checks.
@@ -29,4 +35,5 @@ Fix actionable code-review findings without expanding scope unnecessarily.
 - Updated test/quality results.
 
 ## Completion condition
-No unresolved BLOCKER or HIGH finding remains.
+No unresolved BLOCKER or HIGH finding remains, and applicable mandatory-rule
+violations are corrected or covered by an explicit exception.

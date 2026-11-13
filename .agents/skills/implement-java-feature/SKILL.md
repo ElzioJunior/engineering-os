@@ -31,14 +31,9 @@ Implement production Java/Spring behavior according to an approved plan.
 9. Remove dead/debug/speculative code before completion.
 10. Optimize first for human-readable names, responsibilities, and control
     flow. Refactor code that requires narration merely to be understood.
-11. Add JavaDoc to every method with light or greater complexity. State what
-    the method does and why it exists in the application flow.
-12. Add concise property documentation to application-owned records, DTOs,
-    entities, configuration objects, commands, events, and results.
-13. Add or update further comments and JavaDoc for non-obvious rationale,
-    invariants, contracts, side effects, failure behavior, and
-    architectural/external boundaries; do not narrate self-explanatory code.
-14. Recheck every nearby existing comment after behavior changes and remove or
+11. Apply [Comments and JavaDoc](../../../docs/engineering/coding-standards.md#comments-and-javadoc)
+    to changed methods, properties, and boundaries.
+12. Recheck every nearby existing comment after behavior changes and remove or
     update anything stale, contradictory, speculative, or misleading.
 
 ## Output
@@ -52,13 +47,10 @@ Compiling production implementation ready for tests/quality gates.
 - Data changes have migrations.
 - Normal flow is readable through code structure and names.
 - Non-obvious intent and boundary contracts are documented accurately.
-- Every method at or above the light-complexity threshold explains what it does
-  and why it exists; object properties are documented concisely.
+- Documentation satisfies the linked coding standard.
+- The final task diff satisfies the applicable rules and authorized slice,
+  with evidence under [verification and completion](../../../docs/engineering/ai-development-standards.md#verification-and-completion).
 
 ## Stop conditions
 Stop and return to planning when implementation reveals a missing durable
 decision.
-
-## Documentation usefulness rule
-
-Follow the adopting application's established comment style. The method/property documentation checks above apply only when documentation adds useful information beyond names, types, annotations, and the containing component. Do not require comments that merely restate obvious code, even for methods with light complexity or application-owned fields. For example, queue-name fields in `Queues`, routing keys in `Rks`, obvious identifiers, and simple delegating methods need no descriptive boilerplate. During implementation and review, remove redundant feature comments and preserve explanations of non-obvious business rationale, units, date boundaries, failure semantics, and side effects. Consult `docs/engineering/coding-standards.md` for the canonical practice.

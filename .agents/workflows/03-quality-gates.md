@@ -1,7 +1,10 @@
 # Workflow 03 — Quality Gates
 
 ## Objective
-Prove the implementation meets mandatory engineering standards.
+Run configured checks and collect evidence for the applicable engineering
+standards under [Verification and completion](../../docs/engineering/ai-development-standards.md#verification-and-completion).
+Rules that require inspection carry forward to Workflow 04 with their source
+references. Keep unavailable required checks explicitly unverified.
 
 Apply [Do not bypass quality rules](../../docs/engineering/coding-standards.md#do-not-bypass-quality-rules).
 Correct failures at their source and rerun affected checks. Inspect the diff

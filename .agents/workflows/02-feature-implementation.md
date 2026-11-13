@@ -3,6 +3,13 @@
 ## Objective
 Implement the approved feature in the smallest coherent change.
 
+Before editing or resuming a slice, reconcile the latest user instruction with
+the plan and a comparable flow in the target service. Implement the authorized
+behavior using that flow when it fits. Treat open proposals as pending. A new
+table, scheduler, or delivery guarantee must trace to an explicit requirement
+or active decision before it enters the slice. Follow the current instruction
+for staging and review checkpoints.
+
 ## Skills
 Before implementing, apply
 [Prefer existing platform capabilities](../../docs/engineering/coding-standards.md#prefer-existing-platform-capabilities):
@@ -16,21 +23,14 @@ Execute:
 3. `../skills/create-functional-tests/SKILL.md` when the feature has an important
    functional flow that should be validated across application boundaries.
 
-Before completing, verify that `*Test` unit tests exist only under
-`src/test/unit/java` and `*FunctionalTest` isolated functional tests exist only
-under `src/test/isolated/java`. Do not create real-boundary integrated tests
-unless Workflow 05 is in scope.
+Before completing, verify the adopting project's test layout and suite isolation
+under [Testing Standards](../../docs/engineering/testing-standards.md#project-configuration).
+Create real-boundary integrated tests when Workflow 05 is in scope.
 
-Before handing the implementation to quality gates, verify the documentation
-baseline from the coding standard:
-
-- every method with light or greater complexity states in JavaDoc what it does
-  and why it exists;
-- properties of records, DTOs, entities, configuration objects, commands,
-  events, and results have concise documentation;
-- every test method explains the behavior or failure it proves and why that
-  scenario matters;
-- documentation remains accurate after the final code change.
+Before handing the implementation to quality gates, apply
+[Comments and JavaDoc](../../docs/engineering/coding-standards.md#comments-and-javadoc)
+and the [verification and completion checks](../../docs/engineering/ai-development-standards.md#verification-and-completion)
+to the final slice diff.
 
 ## Incremental delivery
 
@@ -40,7 +40,8 @@ delivery boundary:
 1. Run the focused validation appropriate to the completed slice and record
    only evidence that was actually produced.
 2. Update the canonical execution plan with the backlog status, resumable
-   checkpoint, validation evidence, and exact next action.
+   checkpoint, current user constraints, corrected assumptions, validation
+   evidence, and exact next action.
 3. Inspect the complete slice diff and identify exactly which implementation,
    tests, documentation, and execution-plan changes belong to that slice.
 4. When the Workflow 01 development authorization exists, stage only the
@@ -72,7 +73,3 @@ Return to Workflow 01 if a missing business/architecture decision is discovered.
 
 ## Completion boundary
 Do not perform the final comprehensive quality review here.
-
-## Documentation usefulness rule
-
-Follow the adopting application's established comment style. The method/property documentation checks above apply only when documentation adds useful information beyond names, types, annotations, and the containing component. Do not require comments that merely restate obvious code, even for methods with light complexity or application-owned fields. For example, queue-name fields in `Queues`, routing keys in `Rks`, obvious identifiers, and simple delegating methods need no descriptive boilerplate. During implementation and review, remove redundant feature comments and preserve explanations of non-obvious business rationale, units, date boundaries, failure semantics, and side effects. Consult `docs/engineering/coding-standards.md` for the canonical practice.

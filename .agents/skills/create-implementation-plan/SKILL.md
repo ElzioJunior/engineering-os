@@ -24,25 +24,17 @@ Turn approved context and decisions into a small, executable coding plan.
    - persistence;
    - configuration.
 5. Identify data/Flyway impact.
-6. Identify tests:
-   - unit under `src/test/unit/java`;
-   - isolated functional under `src/test/isolated/java`;
-   - integrated functional under `src/test/integrated/java` only when the
-     explicit integrated workflow is requested;
-   - affected regression tests.
+6. Identify unit, isolated functional, and affected regression tests using the
+   adopting project's configured layout and commands. Include real-boundary
+   integrated work when it belongs to the requested scope. Use
+   [Testing Standards](../../../docs/engineering/testing-standards.md#project-configuration)
+   for defaults and adaptation rules.
 7. Identify failure/edge cases.
 8. Order work into small coherent steps.
 9. Avoid speculative abstractions and unrelated refactors.
-10. Identify methods expected to have light or greater complexity and plan
-    JavaDoc that states what each method does and why it exists.
-11. Identify application-owned record/DTO/entity/configuration properties that
-    require concise property documentation.
-12. Plan concise JavaDoc for every test scenario, stating what it proves and
-    why it matters.
-13. Identify additional human-readable rationale or contract documentation for
-    non-obvious business rules, external boundaries, failure semantics, side
-    effects, concurrency, retries, and idempotency.
-14. Produce a concise execution report that summarizes the approved scope,
+10. Identify documentation needed under
+    [Comments and JavaDoc](../../../docs/engineering/coding-standards.md#comments-and-javadoc).
+11. Produce a concise execution report that summarizes the approved scope,
     ordered development slices, material decisions/risks, validation and
     quality strategy, integrated-test scope, and normal commit/push behavior.
 
@@ -53,15 +45,16 @@ An ordered implementation plan with:
 - tests per step;
 - required JavaDoc/comment intent where code alone cannot communicate the
   contract safely;
-- required method, property, and test-scenario JavaDoc under the mandatory
-  coding-standard baseline;
+- the existing flow to reuse and any justified material deviation per slice;
+- applicable rule references and their planned verification;
 - validation after each meaningful stage.
 
 Also produce `<ID>-execution-report.md` beside the feature/epic and execution plan.
 The report must be short enough for the user to approve the complete
-development scope without rereading the detailed backlog. It must end with one
-explicit request for development authorization and state that approval covers
-normal non-destructive commits and pushes until the integrated-test gate.
+development scope without rereading the detailed backlog. Under Workflow 01,
+request development authorization when it is still needed and describe its
+publication scope. Carry forward existing authorization and explicit limits
+when updating an already authorized plan.
 
 ## Validation
 The plan must not silently introduce a new durable decision.
@@ -69,7 +62,3 @@ The plan must not silently introduce a new durable decision.
 ## Stop conditions
 Return to decision/context work if implementation cannot proceed without a new
 BDR/ADR or unresolved requirement.
-
-## Documentation usefulness rule
-
-Follow the adopting application's established comment style. The method/property documentation checks above apply only when documentation adds useful information beyond names, types, annotations, and the containing component. Do not require comments that merely restate obvious code, even for methods with light complexity or application-owned fields. For example, queue-name fields in `Queues`, routing keys in `Rks`, obvious identifiers, and simple delegating methods need no descriptive boilerplate. During implementation and review, remove redundant feature comments and preserve explanations of non-obvious business rationale, units, date boundaries, failure semantics, and side effects. Consult `docs/engineering/coding-standards.md` for the canonical practice.

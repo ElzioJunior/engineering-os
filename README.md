@@ -18,6 +18,19 @@ Then complete the placeholders in `AGENTS.md`, create the initial product
 documents and decisions, and adapt the commands and thresholds in
 `docs/engineering/` to the project's build.
 
+When adopting the standards in an existing service, make the active Engineering
+OS location, service context, and local build and test conventions discoverable
+from the service's `AGENTS.md`. Verify the entry point from both the workspace
+root and the service directory. When using centralized service context, record
+the source revision and verify the relevant topics against the working base.
+
+Use [AI-assisted development standards](docs/engineering/ai-development-standards.md)
+for the before-edit, resumption, and completion checks. Keep one authoritative
+rule in the engineering standards and link to it from workflows and skills.
+During adoption, map mechanically checkable rules to existing build/CI commands
+and validate that representative violations fail. Record rules requiring review
+and enforcement gaps in the local engineering standards.
+
 ## Operating model
 
 The default feature lifecycle is:
