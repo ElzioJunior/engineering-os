@@ -27,6 +27,19 @@ familiar from another project. When an existing pattern cannot meet the
 requirement safely or correctly, explain the concrete gap and keep the
 deviation focused; do not copy a known defect or override active standards.
 
+## Commit messages
+
+Start every commit subject with `<type>: <summary>`. Choose the type that
+describes the main purpose of the change.
+
+| Prefix | Use |
+| --- | --- |
+| `feat:` | New features |
+| `refact:` | Refactoring |
+| `fix:` | Bug fixes and hotfixes |
+| `docs:` | Documentation changes |
+| `config:` | Configuration updates |
+
 ## Prefer existing platform capabilities
 
 Before implementing a cross-cutting concern, look for a simpler solution in
