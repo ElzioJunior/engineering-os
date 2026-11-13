@@ -252,6 +252,12 @@ together after checking their consumers.
 - Avoid long parameter lists; introduce a meaningful parameter object/domain type when useful.
 - Do not split simple logic into tiny methods solely to satisfy arbitrary size targets.
 - Optimize for cognitive simplicity.
+- Keep each path readable where it is called. When paths share preparation
+  and perform different actions, extract the shared preparation and call
+  each action explicitly. For example, share the calculation and selection
+  of charges, then let one path publish to the queue and the other call the
+  payment provider directly. Use callbacks when they make the flow easier
+  to follow.
 - Name predicates for the decision they return and use `boolean` when callers
   only need that decision. For ordered business filters, make precedence and
   outcomes explicit. Load expensive inputs only when a reached rule needs them
